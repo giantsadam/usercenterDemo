@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/usercenter/usercenter.iml" filepath="$PROJECT_DIR$/usercenter/usercenter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/usercenterDemo.iml" filepath="$PROJECT_DIR$/.idea/usercenterDemo.iml" />
+    </modules>
+  </component>
+</project>
