@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
-import java.nio.charset.StandardCharsets;
+import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.wc.usercenter.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现类
@@ -30,6 +32,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * 混淆
      */
     private static final String SALT = "chenwei";
+
 
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
@@ -81,9 +84,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public User userLogin(String userAccount, String userPassword) {
+    public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         //1.校验
         if(StringUtils.isAnyBlank(userAccount,userPassword)){
+            //修改为自定义异常
             return null;
         }
 
@@ -117,10 +121,37 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
 
-        //3.记录用户的登录态
+        //3.用户脱敏
+        User safetyUser = getSafetyUser(user);
+        //4.记录用户的登录态
+        request.getSession().setAttribute(USER_LOGIN_STATE,safetyUser);
 
+        return safetyUser;
+    }
 
-        return user;
+    /**
+     * 用户脱敏
+     *
+     * @param originUser
+     * @return
+     */
+    @Override
+    public User getSafetyUser(User originUser){
+        if(originUser == null){
+            return null;
+        }
+        User safetyUser = new User();
+        safetyUser.setId(originUser.getId());
+        safetyUser.setUsername(originUser.getUsername());
+        safetyUser.setUserAccount(originUser.getUserAccount());
+        safetyUser.setAvatarUrl(originUser.getAvatarUrl());
+        safetyUser.setGender(originUser.getGender());
+        safetyUser.setPhone(originUser.getPhone());
+        safetyUser.setEmail(originUser.getEmail());
+        safetyUser.setUserRole(originUser.getUserRole());
+        safetyUser.setUserStatus(originUser.getUserStatus());
+        safetyUser.setCreateTime(originUser.getCreateTime());
+        return safetyUser;
     }
 }
 
